@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Dropdown, DropdownButton, Form } from "react-bootstrap";
 import "../styles/Login.css";
+import { userSignin, userSignup } from "../api/auth";
 
 function Login() {
   const [showSignup, setshowSignup] = useState(false);
   const [validated, setValidated] = useState(false);
   const [userType, setUserType] = useState("CUSTOMER");
+  const [userSignupData, setUserSignupData] = useState({});
+  const [message, setMessage] = useState("");
 
   const toggleSignup = () => {
     setshowSignup(!showSignup);
@@ -24,6 +27,70 @@ function Login() {
     setValidated(true);
   };
 
+  const updateSignupData = (e) => {
+    userSignupData[e.target.id] = e.target.value;
+    console.log(userSignupData);
+  };
+
+  const signupFn = (e) => {
+    const username = userSignupData.usename;
+    const userId = userSignupData.userId;
+    const email = userSignupData.email;
+    const password = userSignupData.password;
+
+    const data = {
+      name: username,
+      userId: userId,
+      email: email,
+      userType: userType,
+      password: password,
+    };
+    console.log("DATA", data);
+
+    e.preventDefault();
+
+    userSignup(data)
+      .then(function (response) {
+        if (response.status === 201) {
+          window.location.href = "/";
+        }
+      })
+      .catch(function (error) {
+        if (error.response.status === 400) {
+          setMessage(error.response.data.message);
+        } else {
+          console.log(error);
+        }
+      });
+  };
+
+  const loginfn = (e) => {
+    const userId = document.getElementById("userId").value;
+    const password = document.getElementById("password").value;
+
+    const data = {
+      userId: userId,
+      password: password,
+    };
+    userSignin(data)
+      .then(function (response) {
+        console.log(response);
+        if (response.status === 200) {
+          localStorage.setItem("name", response.data.name);
+        }
+        if (response.data.userType === "CUSTOMER") {
+          window.location.href = "/customer";
+        }
+      })
+      .catch(function (error) {
+        if (error.response.data.message) {
+          setMessage(error.response.data.message);
+        } else {
+          console.log(error);
+        }
+      });
+  };
+
   return (
     <div className="bg-primary d-flex justify-content-center align-items-center vh-100 ">
       <div className="card m-5 p-5">
@@ -32,7 +99,11 @@ function Login() {
             {!showSignup ? (
               <div className="login text-center">
                 <h3>Login</h3>
-                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                <Form
+                  noValidate
+                  validated={validated}
+                  onSubmit={handleSubmit && loginfn}
+                >
                   <Form.Group md="4" controlId="validationCustom01">
                     <div className="input-group m-1 need">
                       <input
@@ -40,6 +111,7 @@ function Login() {
                         className="form-control"
                         placeholder="User ID"
                         required
+                        id="userId"
                       />
                     </div>
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -51,6 +123,7 @@ function Login() {
                         className="form-control"
                         placeholder="password"
                         required
+                        id="password"
                       />
                     </div>
                   </Form.Group>
@@ -73,14 +146,16 @@ function Login() {
             ) : (
               <div className=" signup text-center">
                 <h3>Sign up</h3>
-                <Form>
+                <Form onSubmit={signupFn}>
                   <Form.Group md="4" controlId="validationCustom02">
                     <div className="input-group m-1">
                       <input
                         type="text"
                         className="form-control"
                         placeholder="User ID"
+                        id="userId"
                         required
+                        onChange={updateSignupData}
                       />
                     </div>
                   </Form.Group>
@@ -90,7 +165,9 @@ function Login() {
                         type="text"
                         className="form-control"
                         placeholder="Select Username"
+                        id="username"
                         required
+                        onChange={updateSignupData}
                       />
                     </div>
                   </Form.Group>
@@ -100,7 +177,9 @@ function Login() {
                         type="text"
                         className="form-control"
                         placeholder="Email"
+                        id="email"
                         required
+                        onChange={updateSignupData}
                       />
                     </div>
                   </Form.Group>
@@ -111,6 +190,8 @@ function Login() {
                         className="form-control"
                         placeholder="Select password"
                         required
+                        id="password"
+                        onChange={updateSignupData}
                       />
                     </div>
                   </Form.Group>
@@ -145,6 +226,7 @@ function Login() {
                   >
                     have an account?, Login here
                   </div>
+                  <div className="text">{message}</div>
                 </Form>
               </div>
             )}
