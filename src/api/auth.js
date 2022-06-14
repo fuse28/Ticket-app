@@ -6,5 +6,6 @@ export async function userSignup(data) {
 }
 
 export async function userSignin(data) {
+  console.log(BASE_URL);
   return await axios.post(`${BASE_URL}/crm/api/v1/auth/signin`, data);
 }

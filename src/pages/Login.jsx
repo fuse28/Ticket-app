@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Dropdown, DropdownButton, Form } from "react-bootstrap";
-import "../styles/Login.css";
+import "../styles/login.css";
 import { userSignin, userSignup } from "../api/auth";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [showSignup, setshowSignup] = useState(false);
@@ -18,11 +19,11 @@ function Login() {
     setUserType(e);
   };
 
-  const handleSubmit = (e) => {
-    const form = e.currentTarget;
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      e.preventDefault();
-      e.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
     }
     setValidated(true);
   };
@@ -33,7 +34,7 @@ function Login() {
   };
 
   const signupFn = (e) => {
-    const username = userSignupData.usename;
+    const username = userSignupData.username;
     const userId = userSignupData.userId;
     const email = userSignupData.email;
     const password = userSignupData.password;
@@ -42,7 +43,7 @@ function Login() {
       name: username,
       userId: userId,
       email: email,
-      userType: userType,
+      userTypes: userType,
       password: password,
     };
     console.log("DATA", data);
@@ -51,8 +52,9 @@ function Login() {
 
     userSignup(data)
       .then(function (response) {
+        console.log(response);
         if (response.status === 201) {
-          window.location.href = "/";
+          history(0);
         }
       })
       .catch(function (error) {
@@ -64,26 +66,41 @@ function Login() {
       });
   };
 
+  const history = useNavigate();
+
   const loginfn = (e) => {
-    const userId = document.getElementById("userId").value;
-    const password = document.getElementById("password").value;
+    const userId = userSignupData.userId;
+    const password = userSignupData.password;
 
     const data = {
       userId: userId,
       password: password,
     };
+    console.log("DATA", data);
+    e.preventDefault();
+
     userSignin(data)
       .then(function (response) {
         console.log(response);
         if (response.status === 200) {
           localStorage.setItem("name", response.data.name);
-        }
-        if (response.data.userType === "CUSTOMER") {
-          window.location.href = "/customer";
+          localStorage.setItem("userId", response.data.userId);
+          localStorage.setItem("email", response.data.email);
+          localStorage.setItem("userTypes", response.data.userTypes);
+          localStorage.setItem("userStatus", response.data.userStatus);
+          localStorage.setItem("token", response.data.accessToken);
+
+          if (response.data.userTypes === "CUSTOMER") {
+            history("/customer");
+          } else if (response.data.userTypes === "ENGINEER") {
+            history("/engineer");
+          } else {
+            history("/admin");
+          }
         }
       })
       .catch(function (error) {
-        if (error.response.data.message) {
+        if (error.response.status === 400) {
           setMessage(error.response.data.message);
         } else {
           console.log(error);
@@ -112,6 +129,7 @@ function Login() {
                         placeholder="User ID"
                         required
                         id="userId"
+                        onChange={updateSignupData}
                       />
                     </div>
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -124,6 +142,7 @@ function Login() {
                         placeholder="password"
                         required
                         id="password"
+                        onChange={updateSignupData}
                       />
                     </div>
                   </Form.Group>
