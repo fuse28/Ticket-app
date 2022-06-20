@@ -22,7 +22,7 @@ const ROLES = {
 
 function App() {
   return (
-    <>
+    <div className="vh-100">
       <Router>
         <Routes>
           <Route
@@ -47,7 +47,7 @@ function App() {
           <Route path="/" element={<NotFound />} />
         </Routes>
       </Router>
-    </>
+    </div>
   );
 }
 

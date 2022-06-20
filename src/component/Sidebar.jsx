@@ -7,7 +7,7 @@ function Sidebar() {
       <CSidebarNav>
         <CNavItem className="bg-dark text-center d-flex">
           <i className="bi bi-bar-chart-fill m-2"></i>
-          <h5 className="">THETHERX</h5>
+          <h5 className="mx-5">THETHERX</h5>
         </CNavItem>
         <CNavTitle className="">A CRM app for all your need...</CNavTitle>
         <CNavItem className="d-flex">
