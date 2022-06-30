@@ -1,3 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Signika+Negative&display=swap");
+body {
+  font-family: "Signika Negative", sans-serif;
+}
+
 .border-b {
   border-bottom: 5px solid darkblue;
   border-radius: 5px;
@@ -17,5 +22,33 @@
 }
 
 .borders-y:hover {
-  transform: scale(1.05);
+  transform: scale(1.15);
+}
+.widget-open {
+  transition: box-shadow 0.5s;
+  float: left;
+}
+.widget-open:hover {
+  box-shadow: 0 0 11px rgba(31, 231, 13, 0.699);
+}
+.widget-pending {
+  transition: box-shadow 0.5s;
+  float: left;
+}
+.widget-pending:hover {
+  box-shadow: 0 0 11px rgba(19, 101, 224, 0.829);
+}
+.widget-closed {
+  transition: box-shadow 0.5s;
+  float: left;
+}
+.widget-closed:hover {
+  box-shadow: 0 0 11px rgba(179, 224, 13, 0.815);
+}
+.widget-blocked {
+  transition: box-shadow 0.8s;
+  float: left;
+}
+.widget-blocked:hover {
+  box-shadow: 0 0 11px rgba(231, 64, 13, 0.801);
 }

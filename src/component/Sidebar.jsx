@@ -2,6 +2,11 @@ import React from "react";
 import { CSidebar, CSidebarNav, CNavTitle, CNavItem } from "@coreui/react";
 
 function Sidebar() {
+  const logoutFn = () => {
+    localStorage.clear();
+    window.location.href = "/";
+  };
+
   return (
     <CSidebar unfoldable className="bg-black vh-100">
       <CSidebarNav>
@@ -12,7 +17,13 @@ function Sidebar() {
         <CNavTitle className="">A CRM app for all your need...</CNavTitle>
         <CNavItem className="d-flex">
           <i className="bi bi-box-arrow-left m-2"></i>
-          <div className="mx-5 my-1">Logout</div>
+          <div
+            className="mx-5 my-1"
+            style={{ cursor: "pointer" }}
+            onClick={logoutFn}
+          >
+            Logout
+          </div>
         </CNavItem>
       </CSidebarNav>
     </CSidebar>

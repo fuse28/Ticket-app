@@ -109,8 +109,8 @@ function Login() {
   };
 
   return (
-    <div className="bg-primary d-flex justify-content-center align-items-center vh-100 ">
-      <div className="card m-5 p-5">
+    <div className="d-flex justify-content-center align-items-center vh-100 ">
+      <div className="card-1  m-5 p-5">
         <div className="row">
           <div className="col">
             {!showSignup ? (
@@ -154,7 +154,7 @@ function Login() {
                   />
 
                   <div
-                    className="text-info text-center"
+                    className="text-primary text-center"
                     onClick={toggleSignup}
                     style={{ cursor: "pointer" }}
                   >
@@ -239,7 +239,7 @@ function Login() {
                     />
                   </div>
                   <div
-                    className="text-info text-center"
+                    className="text-primary text-center"
                     onClick={toggleSignup}
                     style={{ cursor: "pointer" }}
                   >

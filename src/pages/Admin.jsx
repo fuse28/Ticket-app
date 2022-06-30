@@ -8,6 +8,7 @@ import { ExportCsv, ExportPdf } from "@material-table/exporters";
 import "../styles/admin.css";
 import { fetchTicket, ticketUpdation } from "../api/ticket";
 import { getAllUsers } from "../api/user";
+import Loading from "../utils/Loading";
 
 function Admin() {
   const [userModal, setUserModal] = useState(false);
@@ -17,6 +18,7 @@ function Admin() {
   const [selectedCurrTicket, setSelectedCurrTicket] = useState({}); //updated values
   const [ticketUpdateModal, setTicketUpdateModal] = useState(false);
   const [ticketCount, setTicketCount] = useState({});
+  const [loading, setLoading] = useState(false);
 
   // {new Obj } new values user
   // First update with selectedCurr Ticket ==> grab the specific row  ==> CURR VALUE
@@ -45,12 +47,14 @@ function Admin() {
   }, []);
 
   const fetchTickets = () => {
+    setLoading(true);
     fetchTicket()
       .then(function (response) {
         if (response.status === 200) {
           console.log(response);
           setTicketList(response.data);
           updateTicketCount(response.data);
+          setLoading(false);
         }
       })
       .catch((error) => {
@@ -59,12 +63,14 @@ function Admin() {
   };
 
   const fetchUsers = (userId) => {
+    setLoading(true);
     getAllUsers(userId)
       .then(function (response) {
         if (response.status === 200) {
           if (userId) {
           }
           setUserDetails(response.data);
+          setLoading(false);
         }
       })
       .catch((error) => {
@@ -100,6 +106,12 @@ function Admin() {
     if (e.target.name === "title") {
       selectedCurrTicket.title = e.target.value;
     } else if (e.target.name === "description") {
+      selectedCurrTicket.title = e.target.value;
+    } else if (e.target.name === "assignee") {
+      selectedCurrTicket.title = e.target.value;
+    } else if (e.target.name === "reporter") {
+      selectedCurrTicket.title = e.target.value;
+    } else if (e.target.name === "ticketPriority") {
       selectedCurrTicket.title = e.target.value;
     }
     //! create a new object wit new values ==> object.assign
@@ -148,308 +160,417 @@ function Admin() {
         <div className="col-1">
           <Sidebar />
         </div>
-        <div className="container col m-1">
-          <h3 className="text-primary text-center">Welcome Admin</h3>
-          <p className="text-muted text-center">
-            Take a quick look at your stats below
-          </p>
 
-          {/*//*cards starts from here */}
-          <div className="row container my-5 mx-2 text-center">
-            <div className="col my-1 p-2 ">
-              <div
-                className="borders-b card bg-success bg-opacity-25 "
-                style={{ width: 12 + "rem" }}
-              >
-                <div className="cardbody borders-b">
-                  <h5 className="card-subtitle">
-                    <i className="bi bi-pen text-primary mx-2"></i>
-                    OPEN
-                  </h5>
-                  <hr />
-                  <div className="row">
-                    <div className="col">{ticketCount.open}</div>
-                    <div className="col">
-                      <div style={{ height: 30, width: 30 }}>
-                        <CircularProgressbar
-                          value={ticketCount.open}
-                          styles={buildStyles({
-                            textColor: "green",
-                            pathColor: "darkGreen",
-                          })}
-                        />
+        {loading ? (
+          <Loading />
+        ) : (
+          <div className="container col m-1">
+            <h3 className="text-primary text-center">Welcome Admin</h3>
+            <p className="text-muted text-center">
+              Take a quick look at your stats below
+            </p>
+
+            {/*//*cards starts from here */}
+
+            <div className="d-flex">
+              <div className="row container my-5 mx-2 text-center">
+                <div className="col my-1 p-2 ">
+                  <div className="widget-open">
+                    <div
+                      className="borders-b card bg-success bg-opacity-25 "
+                      style={{ width: 12 + "rem" }}
+                    >
+                      <div className="cardbody borders-b">
+                        <h5 className="card-subtitle my-2">
+                          <i className="bi bi-door-open text-success mx-2 "></i>
+                          <span className="text-success">OPEN</span>
+                        </h5>
+                        <hr />
+                        <div className="row">
+                          <div
+                            className="col"
+                            style={{
+                              fontSize: "28px",
+                              color: "green",
+                            }}
+                          >
+                            {ticketCount.open}
+                          </div>
+                          <div className="col">
+                            <div style={{ height: 30, width: 30 }}>
+                              <CircularProgressbar
+                                value={ticketCount.open}
+                                styles={buildStyles({
+                                  textColor: "green",
+                                  pathColor: "darkGreen",
+                                })}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* //?PENDING card */}
+
+              <div className="row container my-5 mx-2 text-center">
+                <div className="col my-1 p-2 ">
+                  <div className="widget-pending">
+                    <div
+                      className="borders-b card bg-primary bg-opacity-25 "
+                      style={{ width: 12 + "rem" }}
+                    >
+                      <div className="cardbody borders-b">
+                        <h5 className="card-subtitle my-2">
+                          <i className="bi bi-clock-history text-primary mx-2 "></i>
+                          <span className="text-primary">PENDING</span>
+                        </h5>
+                        <hr />
+                        <div className="row">
+                          <div
+                            className="col"
+                            style={{
+                              fontSize: "28px",
+                              color: "blue",
+                            }}
+                          >
+                            {ticketCount.pending}
+                          </div>
+                          <div className="col">
+                            <div style={{ height: 30, width: 30 }}>
+                              <CircularProgressbar
+                                value={ticketCount.pending}
+                                styles={buildStyles({
+                                  textColor: "blue",
+                                  pathColor: "darkBlue",
+                                })}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/*//TODO CLOSED card */}
+
+              <div className="row container my-5 mx-2 text-center">
+                <div className="col my-1 p-2 ">
+                  <div className="widget-closed">
+                    <div
+                      className="borders-b card bg-warning bg-opacity-25 "
+                      style={{ width: 12 + "rem" }}
+                    >
+                      <div className="cardbody borders-b">
+                        <h5 className="card-subtitle my-2">
+                          <i className="bi bi-x-circle text-warning mx-2"></i>
+                          <span className="text-warning">CLOSED</span>
+                        </h5>
+                        <hr />
+                        <div className="row">
+                          <div
+                            className="col "
+                            style={{
+                              fontSize: "28px",
+                              color: "#e3c622",
+                            }}
+                          >
+                            {ticketCount.closed}
+                          </div>
+                          <div className="col">
+                            <div style={{ height: 30, width: 30 }}>
+                              <CircularProgressbar
+                                value={ticketCount.closed}
+                                styles={buildStyles({
+                                  textColor: "#e3c622",
+                                  pathColor: "#ad9717",
+                                })}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/*//! BLOCKED card */}
+
+              <div className="row container my-5 mx-2 text-center">
+                <div className="col my-1 p-2 ">
+                  <div className="widget-blocked">
+                    <div
+                      className="borders-b card bg-danger bg-opacity-25  hover-shadow "
+                      style={{ width: 12 + "rem" }}
+                    >
+                      <div className="cardbody borders-b">
+                        <h5 className="card-subtitle my-2">
+                          <i className="bi bi-dash-circle text-danger mx-2"></i>
+                          <span className="text-danger">BLOCKED</span>
+                        </h5>
+                        <hr />
+                        <div className="row">
+                          <div
+                            className="col"
+                            style={{
+                              fontSize: "28px",
+                              color: "red",
+                            }}
+                          >
+                            {ticketCount.blocked}
+                          </div>
+                          <div className="col">
+                            <div style={{ height: 30, width: 30 }}>
+                              <CircularProgressbar
+                                value={ticketCount.blocked}
+                                styles={buildStyles({
+                                  textColor: "red",
+                                  pathColor: "darkRed",
+                                })}
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+            <hr />
 
-          {/* //?PENDING card */}
+            <div className="container">
+              <MaterialTable
+                onRowClick={(event, ticketDetail) => editTicket(ticketDetail)}
+                data={ticketList}
+                columns={[
+                  {
+                    title: "Ticket ID",
+                    field: "id",
+                    cellStyle: {
+                      cursor: "not-allowed",
+                    },
+                  },
+                  {
+                    title: "TITLE",
+                    field: "title",
+                  },
+                  {
+                    title: "Description",
+                    field: "description",
+                  },
+                  {
+                    title: "Reporter",
+                    field: "reporter",
+                  },
+                  {
+                    title: "Priority",
+                    field: "ticketPriority",
+                  },
+                  {
+                    title: "Assignee",
+                    field: "assignee",
+                  },
+                  {
+                    title: "Status",
+                    field: "status",
+                    lookup: {
+                      OPEN: "OPEN",
+                      IN_PROGRESS: "IN_PROGRESS",
+                      BLOCKED: "BLOCKED",
+                      CLOSED: "CLOSED",
+                    },
+                  },
+                ]}
+                options={{
+                  exportMenu: [
+                    {
+                      label: "Export PDF",
+                      exportFunc: (cols, datas) =>
+                        ExportPdf(cols, datas, "Ticket Records"),
+                    },
+                    {
+                      label: "Export Csv",
+                      exportFunc: (cols, datas) =>
+                        ExportCsv(cols, datas, "Ticket Records"),
+                    },
+                  ],
+                  headerStyle: {
+                    backgroundColor: "#4448bd",
+                    color: "white",
+                  },
+                  rowStyle: {
+                    backgroundColor: "#d7d9db",
+                  },
+                }}
+                title="Ticket Records"
+              />
 
-          <div className="row container my-5 mx-2 text-center">
-            <div className="col my-1 p-2 ">
-              <div
-                className="borders-b card bg-primary bg-opacity-25 "
-                style={{ width: 12 + "rem" }}
-              >
-                <div className="cardbody borders-b">
-                  <h5 className="card-subtitle">
-                    <i className="bi bi-pen text-primary mx-2"></i>
-                    PENDING
-                  </h5>
-                  <hr />
-                  <div className="row">
-                    <div className="col">{ticketCount.pending}</div>
-                    <div className="col">
-                      <div style={{ height: 30, width: 30 }}>
-                        <CircularProgressbar
-                          value={ticketCount.pending}
-                          styles={buildStyles({
-                            textColor: "blue",
-                            pathColor: "darkBlue",
-                          })}
-                        />
+              {ticketUpdateModal ? (
+                <Modal
+                  show={ticketUpdateModal}
+                  onHide={onCloseTicketModal}
+                  backdrop="static"
+                  centered
+                >
+                  <Modal.Header closeButton>
+                    <Modal.Title>Update Ticket</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <form onSubmit={updateTicket}>
+                      <div className="p-1">
+                        <h5 className="text-primary">
+                          Ticket ID :{selectedCurrTicket.id}
+                        </h5>
+                        <div className="input-group">
+                          <label className="label input-group-text label-md">
+                            Title
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="title"
+                            value={selectedCurrTicket.title}
+                            onChange={onTicketUpdate}
+                          />
+                        </div>
+                        <div className="input-group">
+                          <label className="label input-group-text label-md">
+                            Description
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="description"
+                            value={selectedCurrTicket.description}
+                            onChange={onTicketUpdate}
+                          />
+                        </div>
+                        <div className="input-group">
+                          <label className="label input-group-text label-md">
+                            Assignee
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="assignee"
+                            value={selectedCurrTicket.assignee}
+                            onChange={onTicketUpdate}
+                          />
+                        </div>
+                        <div className="input-group">
+                          <label className="label input-group-text label-md">
+                            Reporter
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="reporter"
+                            value={selectedCurrTicket.reporter}
+                            onChange={onTicketUpdate}
+                          />
+                        </div>
+                        <div className="input-group">
+                          <label className="label input-group-text label-md">
+                            Ticket Priority
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="ticketPriority"
+                            value={selectedCurrTicket.ticketPriority}
+                            onChange={onTicketUpdate}
+                          />
+                        </div>
+                        <Button type="submit" className="my-1">
+                          Update
+                        </Button>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    </form>
+                  </Modal.Body>
+                </Modal>
+              ) : (
+                ""
+              )}
+
+              <hr />
+
+              {/* USER RECORD TABLE */}
+
+              <MaterialTable
+                columns={[
+                  {
+                    title: "User ID",
+                    field: "userId",
+                    cellStyle: {
+                      cursor: "not-allowed",
+                    },
+                  },
+
+                  {
+                    title: "Name",
+                    field: "name",
+                  },
+                  {
+                    title: "Email",
+                    field: "email",
+                  },
+
+                  {
+                    title: "USER Type",
+                    field: "userTypes",
+                    lookup: {
+                      CUSTOMER: "CUSTOMER",
+                      ENGINEER: "ENGINEER",
+                      ADMIN: "ADMIN",
+                      CLOSED: "CLOSED",
+                    },
+                  },
+                  {
+                    title: "Status",
+                    field: "userStatus",
+                    lookup: {
+                      APPROVED: "APPROVED",
+                      PENDING: "PENDING",
+                      REJECTED: "REJECTED",
+                    },
+                  },
+                ]}
+                options={{
+                  filtering: true,
+                  exportMenu: [
+                    {
+                      label: "Export Pdf",
+                      exportFunc: (cols, datas) =>
+                        ExportPdf(cols, datas, "User Records"),
+                    },
+                    {
+                      label: "Export Csv",
+                      exportFunc: (cols, datas) =>
+                        ExportCsv(cols, datas, "User Records"),
+                    },
+                  ],
+                  headerStyle: {
+                    backgroundColor: "darkblue",
+                    color: "#fff",
+                  },
+                  rowStyle: {
+                    backgroundColor: "#eee",
+                    cursor: "pointer",
+                  },
+                }}
+                data={userDetails}
+                title="User Records"
+              />
             </div>
           </div>
-
-          {/*//TODO CLOSED card */}
-
-          <div className="row container my-5 mx-2 text-center">
-            <div className="col my-1 p-2 ">
-              <div
-                className="borders-b card bg-warning bg-opacity-25 "
-                style={{ width: 12 + "rem" }}
-              >
-                <div className="cardbody borders-b">
-                  <h5 className="card-subtitle">
-                    <i className="bi bi-pen text-primary mx-2"></i>
-                    CLOSED
-                  </h5>
-                  <hr />
-                  <div className="row">
-                    <div className="col">{ticketCount.closed}</div>
-                    <div className="col">
-                      <div style={{ height: 30, width: 30 }}>
-                        <CircularProgressbar
-                          value={ticketCount.closed}
-                          styles={buildStyles({
-                            textColor: "yellow",
-                            pathColor: "darkYellow",
-                          })}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/*//! BLOCKED card */}
-
-          <div className="row container my-5 mx-2 text-center">
-            <div className="col my-1 p-2 ">
-              <div
-                className="borders-b card bg-danger bg-opacity-25 "
-                style={{ width: 12 + "rem" }}
-              >
-                <div className="cardbody borders-b">
-                  <h5 className="card-subtitle">
-                    <i className="bi bi-pen text-primary mx-2"></i>
-                    BLOCKED
-                  </h5>
-                  <hr />
-                  <div className="row">
-                    <div className="col">{ticketCount.blocked}</div>
-                    <div className="col">
-                      <div style={{ height: 30, width: 30 }}>
-                        <CircularProgressbar
-                          value={ticketCount.blocked}
-                          styles={buildStyles({
-                            textColor: "red",
-                            pathColor: "darkRed",
-                          })}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <hr />
-
-          <div className="container">
-            <MaterialTable
-              onRowClick={(event, ticketDetail) => editTicket(ticketDetail)}
-              data={ticketList}
-              columns={[
-                {
-                  title: "Ticket ID",
-                  field: "id",
-                },
-                {
-                  title: "TITLE",
-                  field: "title",
-                },
-                {
-                  title: "Description",
-                  field: "description",
-                },
-                {
-                  title: "Reporter",
-                  field: "reporter",
-                },
-                {
-                  title: "Priority",
-                  field: "ticketPriority",
-                },
-                {
-                  title: "Assignee",
-                  field: "assignee",
-                },
-                {
-                  title: "Status",
-                  field: "status",
-                  lookup: {
-                    OPEN: "OPEN",
-                    IN_PROGRESS: "IN_PROGRESS",
-                    BLOCKED: "BLOCKED",
-                    CLOSED: "CLOSED",
-                  },
-                },
-              ]}
-              options={{
-                exportMenu: [
-                  {
-                    label: "Export PDF",
-                    exportFunc: (cols, datas) =>
-                      ExportPdf(cols, datas, "Ticket Records"),
-                  },
-                  {
-                    label: "Export Csv",
-                    exportFunc: (cols, datas) =>
-                      ExportCsv(cols, datas, "Ticket Records"),
-                  },
-                ],
-                headerStyle: {
-                  backgroundColor: "#4448bd",
-                  color: "white",
-                },
-                rowStyle: {
-                  backgroundColor: "#d7d9db",
-                },
-              }}
-              title="Ticket Records"
-            />
-            {ticketUpdateModal ? (
-              <Modal
-                show={ticketUpdateModal}
-                onHide={onCloseTicketModal}
-                backdrop="static"
-                centered
-              >
-                <Modal.Header closeButton>
-                  <Modal.Title>Update Ticket</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <form onSubmit={updateTicket}>
-                    <div className="p-1">
-                      <h5 className="text-primary">
-                        Ticket ID :{selectedCurrTicket.id}
-                      </h5>
-                      <div className="input-group">
-                        <label className="label input-group-text label-md">
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="title"
-                          value={selectedCurrTicket.title}
-                          onChange={onTicketUpdate}
-                        />
-                      </div>
-                      <Button type="submit" className="my-1">
-                        Update{" "}
-                      </Button>
-                    </div>
-                  </form>
-                </Modal.Body>
-              </Modal>
-            ) : (
-              ""
-            )}
-            <MaterialTable
-              columns={[
-                {
-                  title: "User ID",
-                  field: "userId",
-                },
-
-                {
-                  title: "Name",
-                  field: "name",
-                },
-                {
-                  title: "Email",
-                  field: "email",
-                },
-
-                {
-                  title: "USER Type",
-                  field: "userTypes",
-                  lookup: {
-                    CUSTOMER: "CUSTOMER",
-                    ENGINEER: "ENGINEER",
-                    ADMIN: "ADMIN",
-                    CLOSED: "CLOSED",
-                  },
-                },
-                {
-                  title: "Status",
-                  field: "userStatus",
-                  lookup: {
-                    APPROVED: "APPROVED",
-                    PENDING: "PENDING",
-                    REJECTED: "REJECTED",
-                  },
-                },
-              ]}
-              options={{
-                filtering: true,
-                exportMenu: [
-                  {
-                    label: "Export Pdf",
-                    exportFunc: (cols, datas) =>
-                      ExportPdf(cols, datas, "Ticket Records"),
-                  },
-                  {
-                    label: "Export Csv",
-                    exportFunc: (cols, datas) =>
-                      ExportCsv(cols, datas, "Ticket Records"),
-                  },
-                ],
-                headerStyle: {
-                  backgroundColor: "darkblue",
-                  color: "#fff",
-                },
-                rowStyle: {
-                  backgroundColor: "#eee",
-                },
-              }}
-              data={userDetails}
-              title="User Records"
-            />
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
