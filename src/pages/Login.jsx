@@ -10,8 +10,15 @@ function Login() {
   const [userType, setUserType] = useState("CUSTOMER");
   const [userSignupData, setUserSignupData] = useState({});
   const [message, setMessage] = useState("");
+  const [userId, setUserId] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+
+  const navigate = useNavigate();
 
   const toggleSignup = () => {
+    clearState();
     setshowSignup(!showSignup);
   };
 
@@ -29,22 +36,22 @@ function Login() {
   };
 
   const updateSignupData = (e) => {
-    userSignupData[e.target.id] = e.target.value;
+    setMessage("");
+    if (e.target.id === "userId") setUserId(e.target.value);
+    else if (e.target.id === "password") setUserPassword(e.target.value);
+    else if (e.target.id === "password") setUserPassword(e.target.value);
+    else if (e.target.id === "username") setUserName(e.target.value);
+    else setUserEmail(e.target.value);
     console.log(userSignupData);
   };
 
   const signupFn = (e) => {
-    const username = userSignupData.username;
-    const userId = userSignupData.userId;
-    const email = userSignupData.email;
-    const password = userSignupData.password;
-
     const data = {
-      name: username,
+      name: userName,
       userId: userId,
-      email: email,
+      email: userEmail,
       userTypes: userType,
-      password: password,
+      password: userPassword,
     };
     console.log("DATA", data);
 
@@ -54,7 +61,9 @@ function Login() {
       .then(function (response) {
         console.log(response);
         if (response.status === 201) {
-          history(0);
+          setshowSignup(false);
+          clearState();
+          setMessage("User Signed Up successfully");
         }
       })
       .catch(function (error) {
@@ -69,12 +78,9 @@ function Login() {
   const history = useNavigate();
 
   const loginfn = (e) => {
-    const userId = userSignupData.userId;
-    const password = userSignupData.password;
-
     const data = {
       userId: userId,
-      password: password,
+      password: userPassword,
     };
     console.log("DATA", data);
     e.preventDefault();
@@ -104,8 +110,17 @@ function Login() {
           setMessage(error.response.data.message);
         } else {
           console.log(error);
+          setMessage(error.response.data.message);
         }
       });
+  };
+
+  const clearState = () => {
+    setMessage("");
+    setUserId("");
+    setUserPassword("");
+    setUserName("");
+    setUserEmail("");
   };
 
   return (

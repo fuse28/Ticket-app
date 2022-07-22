@@ -10,10 +10,10 @@ function Unauthorised() {
   return (
     <section className="bg-light vh-100 d-flex justify-content-center align-items-center text-center">
       <div>
-        <h1>Not Found</h1>
+        <h1>Unauthorized Assess</h1>
         <img src={not} alt="/" />
         <br />
-        <p>Page is available</p>
+        <p className="text-danger">you don't have access to this page</p>
         <div className="flex-row">
           <button className="btn btn-primary" onClick={goBack}>
             go back

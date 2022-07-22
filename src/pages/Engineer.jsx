@@ -4,7 +4,11 @@ import Sidebar from "../component/Sidebar";
 import MaterialTable from "@material-table/core";
 import { ExportPdf, ExportCsv } from "@material-table/exporters";
 import { Modal } from "react-bootstrap";
+import Button from "@mui/material/Button";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import { fetchTicket, ticketUpdation } from "../api/ticket";
 import { useEffect } from "react";
 
@@ -19,14 +23,21 @@ function Engineer() {
   const [selectedCurrTicket, setSelectedCurrTicket] = useState({});
   const [ticketCount, setticketCount] = useState({});
   const [message, setMessage] = useState("");
+  const [task, setTask] = useState("");
 
   const pieData = [
     { name: "OPEN", value: ticketCount.open },
     { name: "PENDING", value: ticketCount.pending },
     { name: "CLOSED", value: ticketCount.closed },
     { name: "BLOCKED", value: ticketCount.blocked },
-    { name: "PENDING", value: ticketCount.pending },
   ];
+
+  const onOpenTicketModal = () => {
+    setTicketModal(true);
+  };
+  const onCloseTicketModal = () => {
+    setTicketModal(false);
+  };
 
   const updateSelectedCurrTicket = (data) => {
     setSelectedCurrTicket(data);
@@ -113,21 +124,35 @@ function Engineer() {
         data.blocked += 1;
       } else if (x.status === "CLOSED") {
         data.closed += 1;
-      } else {
-        data.pending += 1;
       }
     });
     setticketCount(Object.assign({}, data));
   };
   console.log(ticketCount);
-  const onOpenTicketModal = () => {
-    setTicketModal(true);
-  };
-  const onCloseTicketModal = () => {
-    setTicketModal(false);
-  };
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+
+  const tasks = [
+    {
+      value: "OPEN",
+      label: "OPEN",
+    },
+    {
+      value: "IN_PROGRESS",
+      label: "IN_PROGRESS",
+    },
+    {
+      value: "BLOCKED",
+      label: "BLOCKED",
+    },
+    {
+      value: "CLOSED",
+      label: "CLOSED",
+    },
+  ];
+  const handleChange = (event) => {
+    setTask(event.target.value);
+  };
 
   return (
     <div className="bg-light min-vh-100 ">
@@ -167,93 +192,6 @@ function Engineer() {
           <hr />
 
           <div className="container">
-            {/* {ticketUpdateModal ? ( */}
-            {/* <Modal
-                // show={ticketUpdateModal}
-                onHide={onCloseTicketModal}
-                backdrop="static"
-                centered
-              >
-                <Modal.Header closeButton>
-                  <Modal.Title>Update Ticket</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  {/* <form onSubmit={updateTicket}> */}
-            {/* <div className="p-1">
-                      <h5 className="text-primary">
-                        Ticket ID :{selectedCurrTicket.id}
-                      </h5>
-                      <div className="input-group">
-                        <label className="label input-group-text label-md">
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="title"
-                          value={selectedCurrTicket.title}
-                          onChange={onTicketUpdate}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="label input-group-text label-md">
-                          Description
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="description"
-                          value={selectedCurrTicket.description}
-                          onChange={onTicketUpdate}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="label input-group-text label-md">
-                          Assignee
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="assignee"
-                          value={selectedCurrTicket.assignee}
-                          onChange={onTicketUpdate}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="label input-group-text label-md">
-                          Reporter
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="reporter"
-                          value={selectedCurrTicket.reporter}
-                          onChange={onTicketUpdate}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="label input-group-text label-md">
-                          Ticket Priority
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="ticketPriority"
-                          value={selectedCurrTicket.ticketPriority}
-                          onChange={onTicketUpdate}
-                        />
-                      </div>
-                      <Button type="submit" className="my-1">
-                        Update
-                      </Button>
-                    </div>
-                  </form>
-                </Modal.Body>
-              </Modal> */}
-            {/* ) : (
-              ""
-            )} */}
-
             {/* USER RECORD TABLE */}
 
             <MaterialTable
@@ -319,9 +257,100 @@ function Engineer() {
                   cursor: "pointer",
                 },
               }}
-              // data={userDetails}
               title="Ticket Assigned"
             />
+            <button className="btn btn-info " onClick={onOpenTicketModal}>
+              Open modal
+            </button>
+
+            {ticketModal ? (
+              <Modal
+                show={ticketModal}
+                onHide={onCloseTicketModal}
+                backdrop="static"
+                keyboard={false}
+                centered
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title>UPDATE TICKET</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Box
+                    component="form"
+                    sx={{
+                      "& .MuiTextField-root": { m: 1, width: "25ch" },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                  >
+                    <div>
+                      <h5 className="card-subtitle mb-2 text-primary lead">
+                        Ticket ID: {selectedCurrTicket.id}
+                      </h5>
+                      <TextField
+                        id="stadard-basic"
+                        label="Title*"
+                        variant="standard"
+                        color="error"
+                        value={selectedCurrTicket.title}
+                        onChange={onTicketUpdate}
+                      />
+                      <TextField
+                        disabled
+                        id="stadard-basic"
+                        label="Assignee"
+                        variant="standard"
+                        value={selectedCurrTicket.assignee}
+                      />
+                      <TextField
+                        id="filled-number"
+                        label="Priority"
+                        type="number"
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        variant="standard"
+                        value={selectedCurrTicket.ticketPriority}
+                        onChange={onTicketUpdate}
+                      />
+                      <TextField
+                        id="standard-select-task"
+                        select
+                        label="Status"
+                        value={selectedCurrTicket.status}
+                        onChange={onTicketUpdate && handleChange}
+                        helperText="Please select your task"
+                        variant="standard"
+                      >
+                        {tasks.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                      <TextField
+                        id="standard-multiline-static"
+                        label="description"
+                        multiline
+                        rows={5}
+                        variant="standard"
+                        value={selectedCurrTicket.description}
+                      />
+                    </div>
+                  </Box>
+                  <Button
+                    variant="contained"
+                    onClick={() => onCloseTicketModal()}
+                    color="error"
+                  >
+                    Cancel
+                  </Button>
+                </Modal.Body>
+                <Modal.Footer></Modal.Footer>
+              </Modal>
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </div>

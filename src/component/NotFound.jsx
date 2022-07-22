@@ -13,7 +13,7 @@ function NotFound() {
         <h1>Not Found</h1>
         <img src={not} alt="/" />
         <br />
-        <p>Page is unavailable</p>
+        <p className="text-primary">Page is unavailable</p>
         <div className="flex-row">
           <button className="btn btn-primary" onClick={goBack}>
             go back

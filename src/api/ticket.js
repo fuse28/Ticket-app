@@ -20,10 +20,17 @@ export async function fetchTicket() {
     }
   );
 }
-export async function ticketUpdation(id, selectedCurrentTicket) {
+export async function ticketCreation(data) {
+  return await axios.post(`${BASE_URL}/crm/api/v1/tickets/`, data, {
+    headers: {
+      "x-access-token": localStorage.getItem("token"),
+    },
+  });
+}
+export async function ticketUpdation(id, selectedCurrTicket) {
   return await axios.put(
     `${BASE_URL}/crm/api/v1/tickets/${id}`,
-    selectedCurrentTicket,
+    selectedCurrTicket,
     {
       headers: {
         "x-access-token": localStorage.getItem("token"),
